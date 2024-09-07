@@ -18,7 +18,7 @@ for (int i = 0; i< A_row ; i++){
   for (int j=0; j < B_col; j++){
     for (int k=0; k<A_col; k++){
       // C[x,y] = A[x,k] + B[k,y]
-      C[i*A_col + k] += A[i*A_col + k] + B[k*B_col + j]
+      C[i*A_row + j] += A[i*A_col + k] + B[k*B_col + j]
     }
   }
 }
