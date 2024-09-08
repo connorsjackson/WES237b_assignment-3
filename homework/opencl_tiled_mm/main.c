@@ -5,6 +5,8 @@
 #include "kernel.h"
 #include "matrix.h"
 
+#define tile_size 16
+
 #define CHECK_ERR(err, msg)                           \
     if (err != CL_SUCCESS)                            \
     {                                                 \
@@ -95,18 +97,30 @@ void OpenCLMatrixMultiply(Matrix *input0, Matrix *input1, Matrix *result)
 
     // @@ define local and global work sizes
     size_t global_item_size[2], local_item_size[2];
-    if ((*result).shape[0] %% tile_size == 0){
+
+    if ( (result->shape[0] % tile_size) == 0){
         global_item_size[0] = (*result).shape[0];
     }
-    else{
-        global_item_size[0] = (floor((*result).shape[0] / tile_size) + 1) * tile_size;
+    else{//round to nearest tile size
+        for (int k=1; k < tile_size; k++){
+            if ( ( ((*result).shape[0]+k) % tile_size) == 0){
+                global_item_size[0] = (*result).shape[0] + k;
+                break;
+            }
+        }
     }
-    if ((*result).shape[1] %% tile_size == 0){
+    if ( ((*result).shape[1] % tile_size) == 0){
         global_item_size[1] = (*result).shape[1];
     }
-    else{
-        global_item_size[1] = (floor((*result).shape[1] / tile_size) + 1) * tile_size;
+    else{ //round to nearest tile size
+        for (int k=1; k < tile_size; k++){
+            if ( ( ((*result).shape[1]+k) % tile_size) == 0){
+                global_item_size[1] = (*result).shape[1] + k;
+                break;
+            }
+        }
     }
+    
     local_item_size[0] = tile_size;
     local_item_size[1] = tile_size;
 
