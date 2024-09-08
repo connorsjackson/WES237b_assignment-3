@@ -11,6 +11,7 @@ __kernel void matrixMultiply(
   for (int k=0; k < numAColumns; k++){
     C[i*numCColumns +  j] += (A[i*numAColumns+k] * B[k*numBColumns + j]);
   }
+  
 }
 
 /* Naive MM is below
